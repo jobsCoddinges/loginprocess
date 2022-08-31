@@ -4,6 +4,7 @@ var fs = require("fs");
 var bodyParser = require("body-parser");
 var compression = require("compression");
 var helmet = require("helmet");
+var db = require("./lib/db");
 app.use(helmet());
 var session = require("express-session");
 var FileStore = require("session-file-store")(session);
@@ -26,10 +27,8 @@ var passport = require("./lib/passport")(app);
 //passport를 통해 성공했을때 어디로 갈지 실패했을때 어디로 갈지 설정.
 
 app.get("*", function (request, response, next) {
-  fs.readdir("./data", function (error, filelist) {
-    request.list = filelist;
-    next();
-  });
+  request.list = db.get("topics").value();
+  next();
 });
 
 var indexRouter = require("./routes/index");
